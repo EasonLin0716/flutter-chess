@@ -24,10 +24,9 @@ class ChessApp extends StatelessWidget {
 
 // Models
 class Position {
+  const Position(this.row, this.col);
   final int row;
   final int col;
-
-  const Position(this.row, this.col);
 }
 
 enum PieceType { king, queen, rook, bishop, knight, pawn }
@@ -35,15 +34,14 @@ enum PieceType { king, queen, rook, bishop, knight, pawn }
 enum PieceColor { white, black }
 
 class ChessPiece {
-  final PieceType type;
-  final PieceColor color;
-  Position position;
-
   ChessPiece({
     required this.type,
     required this.color,
     required this.position,
   });
+  final PieceType type;
+  final PieceColor color;
+  Position position;
 }
 
 // Bloc
@@ -52,19 +50,17 @@ abstract class ChessEvent extends Equatable {
 }
 
 class MovePiece extends ChessEvent {
+  const MovePiece(this.from, this.to);
   final Position from;
   final Position to;
-
-  const MovePiece(this.from, this.to);
 
   @override
   List<Object> get props => [from, to];
 }
 
 class ChessState extends Equatable {
-  final List<ChessPiece> pieces;
-
   const ChessState(this.pieces);
+  final List<ChessPiece> pieces;
 
   @override
   List<Object> get props => [pieces];
@@ -95,7 +91,156 @@ class ChessBloc extends Bloc<ChessEvent, ChessState> {
         color: PieceColor.white,
         position: const Position(0, 1),
       ),
-      // 可以繼續補齊其他棋子...
+      ChessPiece(
+        type: PieceType.bishop,
+        color: PieceColor.white,
+        position: const Position(0, 2),
+      ),
+      ChessPiece(
+        type: PieceType.queen,
+        color: PieceColor.white,
+        position: const Position(0, 3),
+      ),
+      ChessPiece(
+        type: PieceType.king,
+        color: PieceColor.white,
+        position: const Position(0, 4),
+      ),
+      ChessPiece(
+        type: PieceType.bishop,
+        color: PieceColor.white,
+        position: const Position(0, 5),
+      ),
+      ChessPiece(
+        type: PieceType.knight,
+        color: PieceColor.white,
+        position: const Position(0, 6),
+      ),
+      ChessPiece(
+        type: PieceType.rook,
+        color: PieceColor.white,
+        position: const Position(0, 7),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 0),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 1),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 2),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 3),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 4),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 5),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 6),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.white,
+        position: const Position(1, 7),
+      ),
+      ChessPiece(
+        type: PieceType.rook,
+        color: PieceColor.black,
+        position: const Position(7, 0),
+      ),
+      ChessPiece(
+        type: PieceType.knight,
+        color: PieceColor.black,
+        position: const Position(7, 1),
+      ),
+      ChessPiece(
+        type: PieceType.bishop,
+        color: PieceColor.black,
+        position: const Position(7, 2),
+      ),
+      ChessPiece(
+        type: PieceType.queen,
+        color: PieceColor.black,
+        position: const Position(7, 3),
+      ),
+      ChessPiece(
+        type: PieceType.king,
+        color: PieceColor.black,
+        position: const Position(7, 4),
+      ),
+      ChessPiece(
+        type: PieceType.bishop,
+        color: PieceColor.black,
+        position: const Position(7, 5),
+      ),
+      ChessPiece(
+        type: PieceType.knight,
+        color: PieceColor.black,
+        position: const Position(7, 6),
+      ),
+      ChessPiece(
+        type: PieceType.rook,
+        color: PieceColor.black,
+        position: const Position(7, 7),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 0),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 1),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 2),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 3),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 4),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 5),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 6),
+      ),
+      ChessPiece(
+        type: PieceType.pawn,
+        color: PieceColor.black,
+        position: const Position(6, 7),
+      ),
     ];
   }
 }
@@ -140,6 +285,7 @@ class ChessBoard extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               // 這邊之後可以加入移動邏輯
+              print('Tapped on piece at ($row, $col)');
             },
             child: Container(
               color:
