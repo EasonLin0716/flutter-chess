@@ -74,8 +74,8 @@ class ChessBloc extends Bloc<ChessEvent, ChessState> {
   void _onMovePiece(MovePiece event, Emitter<ChessState> emit) {
     final pieces = List<ChessPiece>.from(state.pieces);
     final movingPiece = pieces.firstWhere((p) =>
-        p.position.row == event.from.row && p.position.col == event.from.col);
-    movingPiece.position = event.to;
+        p.position.row == event.from.row && p.position.col == event.from.col)
+      ..position = event.to;
     emit(ChessState(pieces));
   }
 
@@ -275,7 +275,7 @@ class ChessBoard extends StatelessWidget {
         itemBuilder: (context, index) {
           final row = index ~/ 8;
           final col = index % 8;
-          final ChessPiece? piece = pieces
+          final piece = pieces
                   .where((p) => p.position.row == row && p.position.col == col)
                   .toList()
                   .isNotEmpty
@@ -288,8 +288,7 @@ class ChessBoard extends StatelessWidget {
               print('Tapped on piece at ($row, $col)');
             },
             child: Container(
-              color:
-                  (row + col) % 2 == 0 ? Colors.brown[300] : Colors.brown[100],
+              color: (row + col).isEven ? Colors.brown[300] : Colors.brown[100],
               child: Center(
                 child: piece != null
                     ? Text(
