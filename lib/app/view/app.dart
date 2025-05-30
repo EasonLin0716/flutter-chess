@@ -257,8 +257,15 @@ class ChessBoardScreen extends StatelessWidget {
 }
 
 // Widgets
-class ChessBoard extends StatelessWidget {
+class ChessBoard extends StatefulWidget {
   const ChessBoard({super.key});
+
+  @override
+  State<ChessBoard> createState() => _ChessBoardState();
+}
+
+class _ChessBoardState extends State<ChessBoard> {
+  Position? selected;
 
   @override
   Widget build(BuildContext context) {
@@ -287,8 +294,17 @@ class ChessBoard extends StatelessWidget {
                 : null;
             return GestureDetector(
               onTap: () {
-                // TODO: moving
-                print('Tapped on piece at ($row, $col)');
+                final tapped = Position(row, col);
+                if (selected == null && piece != null) {
+                  setState(() {
+                    selected = tapped;
+                  });
+                } else if (selected != null) {
+                  context.read<ChessBloc>().add(MovePiece(selected!, tapped));
+                  setState(() {
+                    selected = null;
+                  });
+                }
               },
               child: Container(
                 color:
