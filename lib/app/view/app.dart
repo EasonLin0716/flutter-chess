@@ -34,10 +34,71 @@ class ChessPiece {
     required this.type,
     required this.color,
     required this.position,
+    required this.move,
   });
   final PieceType type;
   final PieceColor color;
+  final void Function() move;
   Position position;
+}
+
+class King extends ChessPiece {
+  King({
+    required super.color,
+    required super.position,
+    this.hasMoved = false,
+    this.canCastle = false,
+    this.isChecked = false,
+  }) : super(type: PieceType.king, move: () {});
+
+  bool hasMoved;
+  bool canCastle;
+  bool isChecked;
+}
+
+class Queen extends ChessPiece {
+  Queen({
+    required super.color,
+    required super.position,
+  }) : super(type: PieceType.queen, move: () {});
+}
+
+class Bishop extends ChessPiece {
+  Bishop({
+    required super.color,
+    required super.position,
+  }) : super(type: PieceType.bishop, move: () {});
+}
+
+class Knight extends ChessPiece {
+  Knight({
+    required super.color,
+    required super.position,
+  }) : super(type: PieceType.knight, move: () {});
+}
+
+class Rook extends ChessPiece {
+  Rook({
+    required super.color,
+    required super.position,
+    this.hasMoved = false,
+  }) : super(type: PieceType.rook, move: () {});
+
+  bool hasMoved;
+}
+
+class Pawn extends ChessPiece {
+  Pawn({
+    required super.color,
+    required super.position,
+    this.hasMoved = false,
+  }) : super(type: PieceType.pawn, move: () {});
+
+  bool hasMoved;
+
+  void promote(PieceType newType) {
+    // Promote when available
+  }
 }
 
 // Bloc
@@ -79,163 +140,131 @@ class ChessBloc extends Bloc<ChessEvent, ChessState> {
 
   static List<ChessPiece> _initialPieces() {
     return [
-      ChessPiece(
-        type: PieceType.rook,
+      Rook(
         color: PieceColor.white,
         position: const Position(0, 0),
       ),
-      ChessPiece(
-        type: PieceType.knight,
+      Knight(
         color: PieceColor.white,
         position: const Position(0, 1),
       ),
-      ChessPiece(
-        type: PieceType.bishop,
+      Bishop(
         color: PieceColor.white,
         position: const Position(0, 2),
       ),
-      ChessPiece(
-        type: PieceType.queen,
+      Queen(
         color: PieceColor.white,
         position: const Position(0, 3),
       ),
-      ChessPiece(
-        type: PieceType.king,
+      King(
         color: PieceColor.white,
         position: const Position(0, 4),
       ),
-      ChessPiece(
-        type: PieceType.bishop,
+      Bishop(
         color: PieceColor.white,
         position: const Position(0, 5),
       ),
-      ChessPiece(
-        type: PieceType.knight,
+      Knight(
         color: PieceColor.white,
         position: const Position(0, 6),
       ),
-      ChessPiece(
-        type: PieceType.rook,
+      Pawn(
         color: PieceColor.white,
         position: const Position(0, 7),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 0),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 1),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 2),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 3),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 4),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 5),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 6),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.white,
         position: const Position(1, 7),
       ),
-      ChessPiece(
-        type: PieceType.rook,
+      Rook(
         color: PieceColor.black,
         position: const Position(7, 0),
       ),
-      ChessPiece(
-        type: PieceType.knight,
+      Knight(
         color: PieceColor.black,
         position: const Position(7, 1),
       ),
-      ChessPiece(
-        type: PieceType.bishop,
+      Bishop(
         color: PieceColor.black,
         position: const Position(7, 2),
       ),
-      ChessPiece(
-        type: PieceType.queen,
+      Queen(
         color: PieceColor.black,
         position: const Position(7, 3),
       ),
-      ChessPiece(
-        type: PieceType.king,
+      King(
         color: PieceColor.black,
         position: const Position(7, 4),
       ),
-      ChessPiece(
-        type: PieceType.bishop,
+      Bishop(
         color: PieceColor.black,
         position: const Position(7, 5),
       ),
-      ChessPiece(
-        type: PieceType.knight,
+      Knight(
         color: PieceColor.black,
         position: const Position(7, 6),
       ),
-      ChessPiece(
-        type: PieceType.rook,
+      Rook(
         color: PieceColor.black,
         position: const Position(7, 7),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 0),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 1),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 2),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 3),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 4),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 5),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 6),
       ),
-      ChessPiece(
-        type: PieceType.pawn,
+      Pawn(
         color: PieceColor.black,
         position: const Position(6, 7),
       ),
@@ -285,7 +314,8 @@ class _ChessBoardState extends State<ChessBoard> {
             final col = index % 8;
             final piece = pieces
                     .where(
-                        (p) => p.position.row == row && p.position.col == col)
+                      (p) => p.position.row == row && p.position.col == col,
+                    )
                     .toList()
                     .isNotEmpty
                 ? pieces.firstWhere(
