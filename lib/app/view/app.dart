@@ -19,10 +19,16 @@ class App extends StatelessWidget {
 }
 
 // Models
-class Position {
+class Position extends Equatable {
   const Position(this.row, this.col);
   final int row;
   final int col;
+
+  @override
+  List<Object?> get props => [row, col];
+
+  @override
+  String toString() => '($row, $col)';
 }
 
 enum PieceType { king, queen, rook, bishop, knight, pawn }
@@ -98,6 +104,48 @@ class Pawn extends ChessPiece {
 
   void promote(PieceType newType) {
     // Promote when available
+  }
+
+  List<Position> getValidMoves(List<ChessPiece> allPieces) {
+    final moves = <Position>[];
+    final direction = color == PieceColor.white ? 1 : -1;
+    final currentRow = position.row;
+    final currentCol = position.col;
+
+    // Forward 1 step
+    final oneStep = Position(currentRow + direction, currentCol);
+    if (_isEmpty(oneStep, allPieces)) {
+      moves.add(oneStep);
+
+      // Forward 2 steps (only if not moved)
+      final twoSteps = Position(currentRow + 2 * direction, currentCol);
+      if (!hasMoved && _isEmpty(twoSteps, allPieces)) {
+        moves.add(twoSteps);
+      }
+    }
+
+    // Diagonal captures
+    for (final offset in [-1, 1]) {
+      final diag = Position(currentRow + direction, currentCol + offset);
+      if (_isEnemy(diag, allPieces)) {
+        moves.add(diag);
+      }
+    }
+    return moves;
+  }
+
+  bool _isEmpty(Position pos, List<ChessPiece> allPieces) {
+    return !allPieces
+        .any((p) => p.position.row == pos.row && p.position.col == pos.col);
+  }
+
+  bool _isEnemy(Position pos, List<ChessPiece> allPieces) {
+    return allPieces.any(
+      (p) =>
+          p.position.row == pos.row &&
+          p.position.col == pos.col &&
+          p.color != color,
+    );
   }
 }
 
@@ -295,68 +343,89 @@ class ChessBoard extends StatefulWidget {
 
 class _ChessBoardState extends State<ChessBoard> {
   Position? selected;
+  ChessPiece? movingPiece;
 
   @override
   Widget build(BuildContext context) {
     final pieces = context.select((ChessBloc bloc) => bloc.state.pieces);
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: GridView.builder(
-          itemCount: 64,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 8,
-          ),
-          itemBuilder: (context, index) {
-            final row = index ~/ 8;
-            final col = index % 8;
-            final piece = pieces
-                    .where(
-                      (p) => p.position.row == row && p.position.col == col,
-                    )
-                    .toList()
-                    .isNotEmpty
-                ? pieces.firstWhere(
-                    (p) => p.position.row == row && p.position.col == col,
-                  )
-                : null;
-            return GestureDetector(
-              onTap: () {
-                final tapped = Position(row, col);
-                if (selected == null && piece != null) {
-                  setState(() {
-                    selected = tapped;
-                  });
-                } else if (selected != null) {
-                  context.read<ChessBloc>().add(MovePiece(selected!, tapped));
-                  setState(() {
-                    selected = null;
-                  });
-                }
-              },
-              child: Container(
-                color:
-                    (row + col).isEven ? Colors.brown[300] : Colors.brown[100],
-                child: Center(
-                  child: piece != null
-                      ? Text(
-                          piece.type.name.substring(0, 1).toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: piece.color == PieceColor.white
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        )
-                      : null,
-                ),
+    return BlocBuilder<ChessBloc, ChessState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: GridView.builder(
+              itemCount: 64,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 8,
               ),
-            );
-          },
-        ),
-      ),
+              itemBuilder: (context, index) {
+                final row = index ~/ 8;
+                final col = index % 8;
+                final piece = pieces
+                        .where(
+                          (p) => p.position.row == row && p.position.col == col,
+                        )
+                        .toList()
+                        .isNotEmpty
+                    ? pieces.firstWhere(
+                        (p) => p.position.row == row && p.position.col == col,
+                      )
+                    : null;
+                return GestureDetector(
+                  onTap: () {
+                    final tapped = Position(row, col);
+                    if (selected == null && piece != null) {
+                      setState(() {
+                        selected = tapped;
+                        movingPiece = piece;
+                      });
+                    } else if (selected != null) {
+                      try {
+                        if (movingPiece is Pawn) {
+                          final validMoves = (movingPiece! as Pawn)
+                              .getValidMoves(state.pieces);
+                          if (!validMoves.contains(tapped)) {
+                            throw Exception('Illegal Move.');
+                          }
+                        }
+                        context
+                            .read<ChessBloc>()
+                            .add(MovePiece(selected!, tapped));
+                      } on Exception {
+                        print('Exception');
+                      }
+                      setState(() {
+                        selected = null;
+                        movingPiece = null;
+                      });
+                    }
+                  },
+                  child: Container(
+                    color: (row + col).isEven
+                        ? Colors.brown[300]
+                        : Colors.brown[100],
+                    child: Center(
+                      child: piece != null
+                          ? Text(
+                              piece.type.name.substring(0, 1).toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: piece.color == PieceColor.white
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
